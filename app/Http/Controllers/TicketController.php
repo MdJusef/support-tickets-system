@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TicketCreated;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
 
     public function index()
     {
-        $tickets = auth()->user()->role === 'admin' ?
-            Ticket::all() : auth()->user()->tickets;
+        if (auth()->user()->role === 'admin') {
+            $tickets = Ticket::all();
+        } else {
+            $tickets = auth()->user()->tickets;
+        }
         return view('tickets.index', compact('tickets'));
     }
 
@@ -29,15 +34,19 @@ class TicketController extends Controller
             'description' => $request->description,
         ]);
 
-        // Notify the admin
-        //Mail::to('admin@example.com')->send(new TicketCreated($ticket));
+        $adminEmail = env('ADMIN_EMAIL');
+
+        if (empty($adminEmail)) {
+            return redirect()->route('tickets.index')->with('error', 'Admin email is not configured.');
+        }
+
+        Mail::to($adminEmail)->send(new TicketCreated($ticket));
 
         return redirect()->route('tickets.index')->with('success', 'Ticket created successfully.');
     }
 
     public function show(string $id)
     {
-        // Fetch the ticket by its ID, making sure it's either owned by the current user or accessible by an admin
         $ticket = Ticket::where('id', $id)->first();
         // Authorize if the user can view this ticket (optional, depending on your use of policies)
         //$this->authorize('view', $ticket);

@@ -24,7 +24,7 @@
                                         @endif
 
                                         @if(auth()->user()->role === 'admin')
-                                        <a class="nav-link btn btn-primary mr-2 text-white" href="#">Show Ticket List</a>
+                                        <a class="nav-link btn btn-primary mr-2 text-white" href="{{ url('/tickets') }}">Show Ticket List</a>
                                             @endif
                                     </div>
                                 </div>
