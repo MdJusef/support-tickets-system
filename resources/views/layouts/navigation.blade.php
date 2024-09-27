@@ -20,7 +20,7 @@
                                     <div class="navbar-nav">
                                         @if(auth()->user()->role === 'customer')
                                         <a class="nav-link active btn btn-primary mr-2 text-white" aria-current="page" href="{{ route('tickets.create') }}">Create Ticket</a>
-                                        <a class="nav-link active btn btn-primary text-white" aria-current="page" href="#">My Tickets</a>
+                                        <a class="nav-link active btn btn-primary text-white" aria-current="page" href="{{ url('/tickets') }}">My Tickets</a>
                                         @endif
 
                                         @if(auth()->user()->role === 'admin')
