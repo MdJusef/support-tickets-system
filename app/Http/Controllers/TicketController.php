@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TicketClosed;
 use App\Mail\TicketCreated;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -13,9 +14,9 @@ class TicketController extends Controller
     public function index()
     {
         if (auth()->user()->role === 'admin') {
-            $tickets = Ticket::all();
+            $tickets = Ticket::orderBy('created_at', 'asc')->get();
         } else {
-            $tickets = auth()->user()->tickets;
+            $tickets = auth()->user()->tickets()->orderBy('created_at', 'asc')->get();
         }
         return view('tickets.index', compact('tickets'));
     }
@@ -34,13 +35,13 @@ class TicketController extends Controller
             'description' => $request->description,
         ]);
 
-        $adminEmail = env('ADMIN_EMAIL');
+        $adminEmail = "mdjusef143@gmail.com";
 
         if (empty($adminEmail)) {
             return redirect()->route('tickets.index')->with('error', 'Admin email is not configured.');
         }
 
-        Mail::to($adminEmail)->send(new TicketCreated($ticket));
+        Mail::to($adminEmail)->send(new TicketCreated($ticket->title, $ticket->description));
 
         return redirect()->route('tickets.index')->with('success', 'Ticket created successfully.');
     }
@@ -48,8 +49,6 @@ class TicketController extends Controller
     public function show(string $id)
     {
         $ticket = Ticket::where('id', $id)->first();
-        // Authorize if the user can view this ticket (optional, depending on your use of policies)
-        //$this->authorize('view', $ticket);
 
         return view('tickets.show', compact('ticket'));
     }
@@ -78,7 +77,7 @@ class TicketController extends Controller
         $ticket->update(['response' => $request->description]);
 
         // Notify the customer about the response
-       // Mail::to($ticket->user->email)->send(new \App\Mail\TicketResponded($ticket));
+       Mail::to($ticket->user->email)->send(new TicketClosed($ticket));
 
         return back()->with('status', 'Response sent successfully!');
     }
@@ -90,7 +89,7 @@ class TicketController extends Controller
         $ticket->update(['status' => 'closed']);
 
         // Notify the customer about ticket closure
-       // Mail::to($ticket->user->email)->send(new \App\Mail\TicketClosed($ticket));
+       Mail::to($ticket->user->email)->send(new TicketClosed($ticket));
 
         return back()->with('status', 'Ticket closed successfully!');
     }

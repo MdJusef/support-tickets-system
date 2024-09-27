@@ -43,8 +43,8 @@
     <div class="content">
 
         <h2>Ticket!</h2>
-        <p><strong>Ticket title: </strong></p>
-        <p>Ticket description: </p>
+        <p><strong>Ticket title: {{ $title }} </strong></p>
+        <p>Ticket description: {{ $description }} </p>
 
     </div>
     <div class="footer">

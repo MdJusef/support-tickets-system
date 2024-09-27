@@ -38,13 +38,13 @@
 <body>
 <div class="email-container">
     <div class="header">
-        <h1>Ticket Created</h1>
+        <h1>Ticket Closed</h1>
     </div>
     <div class="content">
 
         <h2>Ticket Closed!</h2>
-        <p><strong>Ticket title: </strong></p>
-        <p>Ticket description: </p>
+        <p><strong>Ticket title: {{ $ticket->title }} </strong></p>
+        <p>Ticket description: {{ $ticket->description }}</p>
 
     </div>
     <div class="footer">

@@ -13,10 +13,11 @@ class TicketCreated extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $ticket;
-    public function __construct($ticket)
+    public $title,$description;
+    public function __construct($title,$description)
     {
-        $this->ticket = $ticket;
+        $this->title = $title;
+        $this->description = $description;
     }
 
     public function envelope(): Envelope
